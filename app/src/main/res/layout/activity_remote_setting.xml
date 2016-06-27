@@ -1,0 +1,123 @@
+<LinearLayout 	android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:id="@+id/scrollView"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="5dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/linearLayout1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:maxWidth="230dp"
+                android:minWidth="230dp">
+
+                <TextView android:text="Mouse Sensitivity: "
+                    android:id="@+id/mouseSensitivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_marginBottom="7dp">
+                </TextView>
+
+                <SeekBar android:id="@+id/sensitivityBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                </SeekBar>
+
+                <TextView
+                    android:text="Server IP Address:"
+                    android:id="@+id/TextView01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="127.0.0.1"
+                    android:id="@+id/ipAddress" />
+
+                <CheckBox
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:id="@+id/checkBox1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right|center_vertical"
+                    android:text="Use Screen Capture"
+                    android:layout_marginTop="20dp">
+                </CheckBox>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ScreenCapture">
+
+                    <TextView android:text="Frame Rate:"
+                        android:id="@+id/TextView03"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="20dp" />
+
+                    <EditText
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:id="@+id/frameRate"
+                        android:layout_width="fill_parent"
+                        android:phoneNumber="true"
+                        android:maxWidth="230dp"
+                        android:minWidth="230dp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:onClick="@string/buttonHandler"
+            android:text="Connect"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginTop="15dp"
+            android:focusable="true">
+            <requestFocus />
+        </Button>
+        <Button android:id="@+id/btnDisconnect"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:onClick="@string/buttonHandler"
+            android:text="Disconnect"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginTop="15dp" />
+    </LinearLayout>
+</LinearLayout>

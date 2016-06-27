@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,8 +30,8 @@ public class RemoteActivity extends ActionBarActivity implements View.OnClickLis
     TextView mousePad;
     EditText ipText;
 
-    private boolean isConnected=false;
-    private boolean mouseMoved=false;
+    private boolean isConnected = false;
+    private boolean mouseMoved = false;
     private Socket socket;
     private PrintWriter out;
 
@@ -70,13 +69,13 @@ public class RemoteActivity extends ActionBarActivity implements View.OnClickLis
 
             @Override
         public boolean onTouch(View v, MotionEvent event) {
-            if(isConnected && out!=null) {
+            if(isConnected && out != null) {
                 switch(event.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         //save X and Y positions when user touches the TextView
-                        initX =event.getX();
-                        initY =event.getY();
-                        mouseMoved=false;
+                        initX = event.getX();
+                        initY = event.getY();
+                        mouseMoved = false;
                     break;
                     case MotionEvent.ACTION_MOVE:
                         disX = event.getX()- initX; //Mouse movement in x direction
@@ -85,8 +84,8 @@ public class RemoteActivity extends ActionBarActivity implements View.OnClickLis
                                             is captured*/
                         initX = event.getX();
                         initY = event.getY();
-                        if(disX !=0|| disY !=0){
-                            out.println(disX +","+ disY); //send mouse movement to server
+                        if(disX != 0 || disY != 0){
+                            out.println(disX + "," + disY); //send mouse movement to server
                         }
                         mouseMoved=true;
                     break;
@@ -182,7 +181,7 @@ public class RemoteActivity extends ActionBarActivity implements View.OnClickLis
         protected void onPostExecute(Boolean result)
         {
             isConnected = result;
-            Toast.makeText(context,isConnected?"Connected to server!":"Error while connecting",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,isConnected ? "Connected to server!" : "Error while connecting", Toast.LENGTH_LONG).show();
             try {
                 if(isConnected) {
                     out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket

@@ -1,6 +1,8 @@
 package com.test.wu.remotetest;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +24,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.widget.Toast;
 
 /**
  * Created by Wu on 2016/6/27.
@@ -30,6 +33,8 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
 
     float lastXpos = 0;
     float lastYpos = 0;
+
+    private AppDelegate appDel;
 
     private int mouse_sensitivity = 1;
     private float screenRatio = 1.0f;
@@ -49,11 +54,12 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         setContentView(R.layout.activity_remote_control);
 
         mouse_sensitivity = getIntent().getExtras().getInt("sensitivity");
-        screenRatio = getIntent().getExtras().getFloat("ratio");
 
         // Set the width of the buttons to half the screen size
         Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
 
         Left = (Button) findViewById(R.id.LeftClickButton);
         Right =  (Button) findViewById(R.id.RightClickButton);
@@ -64,8 +70,8 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         Left.setOnTouchListener(this);
         Right.setOnTouchListener(this);
 
-        ClientListener.deviceWidth = width;
-        ClientListener.deviceHeight = display.getHeight() - Left.getHeight();
+        ClientListener.DeviceWidth = width;
+        ClientListener.DeviceHeight = size.y - Left.getHeight();
 
         View touchView = (View) findViewById(R.id.TouchPad);
         touchView.setOnTouchListener(this);
@@ -74,14 +80,11 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         editText.setOnKeyListener(this);
         editText.addTextChangedListener(new TextWatcher() {
             public void  afterTextChanged (Editable s) {
-                try {
-                    sendToAppDel(Constants.KEYBOARD + s.toString());
-                } catch(IndexOutOfBoundsException e) {}
+                sendToAppDel(Constants.KEYBOARD + s.toString());
                 s.clear();
             }
 
             public void  beforeTextChanged  (CharSequence s, int start, int count, int after) {
-
             }
 
             public void  onTextChanged  (CharSequence s, int start, int before, int count) {
@@ -89,7 +92,7 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         });
 
         setImageRequestSizes();
-        AppDelegate appDel = ((AppDelegate)getApplicationContext());
+        appDel = ((AppDelegate)getApplicationContext());
         appDel.setController(this);
     }
 
@@ -102,13 +105,12 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         width = metrics.widthPixels;
         height = metrics.heightPixels;
 
-        ClientListener.deviceWidth = (int)(screenRatio * width);
-        ClientListener.deviceHeight = (int)(screenRatio * height);
-        Log.e("REQUESTINGSIZE", screenRatio + " " + ClientListener.deviceWidth + " " + ClientListener.deviceHeight);
+        ClientListener.DeviceWidth = (int)(screenRatio * width);
+        ClientListener.DeviceHeight = (int)(screenRatio * height);
+        Log.e("REQUESTINGSIZE", screenRatio + " " + ClientListener.DeviceWidth + " " + ClientListener.DeviceHeight);
     }
 
     public void finish() {
-        AppDelegate appDel = ((AppDelegate)getApplicationContext());
         appDel.stopServer();
 
         super.finish();
@@ -146,14 +148,11 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
             sendToAppDel("" + Constants.KEYCODE + c);
         }
         // this will prevent the focus from moving off the text field
-        if( c == KeyEvent.KEYCODE_DPAD_UP  ||
-            c == KeyEvent.KEYCODE_DPAD_DOWN ||
-            c == KeyEvent.KEYCODE_DPAD_LEFT ||
-            c == KeyEvent.KEYCODE_DPAD_RIGHT
-            )
-            return true;
+        return c == KeyEvent.KEYCODE_DPAD_UP ||
+                c == KeyEvent.KEYCODE_DPAD_DOWN ||
+                c == KeyEvent.KEYCODE_DPAD_LEFT ||
+                c == KeyEvent.KEYCODE_DPAD_RIGHT;
 
-        return false;
     }
 
     // Show and hide Keyboard by setting the
@@ -174,20 +173,20 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
     // send message to AppDelegate class
     // to be sent to server on client desktop
     private void sendToAppDel(String message) {
-        AppDelegate appDel = ((AppDelegate)getApplicationContext());
-        if(appDel.connected()) {
+        if(true) {
             appDel.sendMessage(message);
         }
         else {
-            finish();
+            //Toast.makeText(this, "Fail:" + message, Toast.LENGTH_LONG).show();
+            //finish();
         }
     }
 
     private void sendToAppDel(char c) {
-        sendToAppDel(c);
+        sendToAppDel("" + c);
     }
 
-    public void setImage(final Bitmap bit){
+    public void setImage(final Bitmap bit) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             public void run() {
@@ -247,7 +246,9 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
                     sendToAppDel(Constants.SCROLLDOWN);
                     lastYpos = event.getY();
                 }
-            }else lastYpos = event.getY();
+            }
+            else
+                lastYpos = event.getY();
         }
     }
 }

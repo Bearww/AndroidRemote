@@ -181,7 +181,7 @@ public class RemoteActivity extends ActionBarActivity implements View.OnClickLis
         protected void onPostExecute(Boolean result)
         {
             isConnected = result;
-            Toast.makeText(context,isConnected ? "Connected to server!" : "Error while connecting", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, isConnected ? "Connected to server!" : "Error while connecting", Toast.LENGTH_LONG).show();
             try {
                 if(isConnected) {
                     out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket

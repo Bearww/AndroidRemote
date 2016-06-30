@@ -13,7 +13,7 @@ public class AppDelegate extends Application {
     private ClientListener listener;
     private RemoteController controller;
 
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
     }
 
@@ -29,7 +29,7 @@ public class AppDelegate extends Application {
         *Connect to server
         ***********************************************************************************/
 
-    public void createClientThread(String ipAddress, int port){
+    public void createClientThread(String ipAddress, int port) {
 
         client = new ClientThread(ipAddress, port);
 
@@ -37,20 +37,19 @@ public class AppDelegate extends Application {
         cThread.start();
     }
 
-    public void createScreenCaptureThread(int listenerPort, int fps)
-    {
+    public void createScreenCaptureThread(int listenerPort, int fps) {
         listener = new ClientListener(listenerPort, fps, this);
 
         Thread cThread = new Thread(listener);
         cThread.start();
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         if(client != null)
             client.sendMessage(message);
     }
 
-    public void stopServer(){
+    public void stopServer() {
         if(client != null && client.connected) {
             client.closeSocket();
         }
@@ -59,7 +58,6 @@ public class AppDelegate extends Application {
         if(listener != null) {
             listener.closeSocket();
         }
-
         listener = null;
     }
 

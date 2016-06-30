@@ -16,7 +16,7 @@ import android.util.Log;
 /**
  * Created by Wu on 2016/6/27.
  */
-public class ClientListener implements Runnable{
+public class ClientListener implements Runnable {
 
     private InetAddress serverAddr;
     private int serverPort;
@@ -27,17 +27,17 @@ public class ClientListener implements Runnable{
     private int framesPerSecond = -1;
     public boolean connected = false;
 
-    public static int deviceWidth = 100;
-    public static int deviceHeight = 100;
+    public static int DeviceWidth = 100;
+    public static int DeviceHeight = 100;
 
-    public ClientListener(int port, int fps, AppDelegate del){
+    public ClientListener(int port, int fps, AppDelegate del) {
         delegate = del;
         framesPerSecond = fps;
 
-        try{
+        try {
             serverAddr = getLocalIpAddress();
             dgp = new DatagramPacket(buf, buf.length);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("ClientListener", "C: Error", e);
         }
         serverPort = port;
@@ -49,7 +49,7 @@ public class ClientListener implements Runnable{
             connected = true;
 
             Timer timer = new Timer();
-            int frames = 1000/framesPerSecond;
+            int frames = 10000 / framesPerSecond;
 
             timer.scheduleAtFixedRate(getImageTask, 0, frames);
 
@@ -60,32 +60,28 @@ public class ClientListener implements Runnable{
         }
     }
 
-
-
-    private TimerTask getImageTask = new TimerTask(){
-
+    private TimerTask getImageTask = new TimerTask() {
         @Override
         public void run() {
             String message = new String("" +
                     Constants.REQUESTIMAGE +
                     Constants.DELIMITER +
-                    deviceWidth +
+                    DeviceWidth +
                     Constants.DELIMITER +
-                    deviceHeight);
+                    DeviceHeight);
 
             delegate.sendMessage(message);
         }
     };
 
-    private void listen()
-    {
-        while(connected){
-            try{
+    private void listen() {
+        while(connected) {
+            try {
                 socket.receive(dgp);
                 Bitmap bm = BitmapFactory.decodeByteArray(dgp.getData(), 0, 65000);
                 Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
                 delegate.getController().setImage(bm);
-            } catch(Exception e){
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         }
@@ -95,10 +91,9 @@ public class ClientListener implements Runnable{
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && !inetAddress.toString().contains(":"))
-                    {
+                    if (!inetAddress.isLoopbackAddress() && !inetAddress.toString().contains(":")) {
                         return inetAddress;
                     }
                 }
@@ -109,7 +104,7 @@ public class ClientListener implements Runnable{
         return null;
     }
 
-    public void closeSocket(){
+    public void closeSocket() {
         if(socket != null) {
             socket.close();
         }

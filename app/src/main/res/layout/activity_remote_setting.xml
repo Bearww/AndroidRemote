@@ -86,7 +86,6 @@
                         android:text="20"
                         android:id="@+id/frameRate"
                         android:layout_width="fill_parent"
-                        android:phoneNumber="true"
                         android:maxWidth="230dp"
                         android:minWidth="230dp"
                         android:textStyle="normal" />

@@ -10,12 +10,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".AppDelegate"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
@@ -29,7 +31,14 @@
             android:name=".MenuActivity"
             android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RemoteActivity"></activity>
+        <activity
+            android:name=".RemoteActivity" />
+        <activity
+            android:name=".TouchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RemoteController"
+            android:configChanges="keyboardHidden|keyboard" />
     </application>
 
 </manifest>

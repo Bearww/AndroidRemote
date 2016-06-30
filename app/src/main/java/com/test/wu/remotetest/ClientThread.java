@@ -45,25 +45,25 @@ public class ClientThread implements Runnable {
         }
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         try {
             buf = message.getBytes();
             DatagramPacket out = new DatagramPacket(buf, buf.length, serverAddr, serverPort);
             socket.send(out);
         }
-        catch (Exception e){
-            closeSocketNoMessge();
+        catch (Exception e) {
+            closeSocketNoMessage();
         }
     }
 
-    public void closeSocketNoMessge(){
+    public void closeSocketNoMessage() {
         if(socket != null) {
             socket.close();
         }
         connected = false;
     }
 
-    public void closeSocket(){
+    public void closeSocket() {
         sendMessage(new String("Close"));
 
         if(socket != null) {
@@ -76,7 +76,7 @@ public class ClientThread implements Runnable {
     /***********************************************************************************
         *Test connection with server
         ***********************************************************************************/
-    private boolean testConnection(){
+    private boolean testConnection() {
         try {
             if(!connected)
                 buf = new String("Connectivity").getBytes();
@@ -90,7 +90,7 @@ public class ClientThread implements Runnable {
             return false;
         }
 
-        try{
+        try {
             DatagramPacket in = new DatagramPacket(buf, buf.length);
             socket.receive(in);
             return true;
@@ -99,7 +99,7 @@ public class ClientThread implements Runnable {
         }
     }
 
-    private void surveyConnection(){
+    private void surveyConnection() {
         int count = 0;
         while(connected) {
             try {
@@ -111,7 +111,8 @@ public class ClientThread implements Runnable {
             else
                 count = 0;
 
-            if(count == 3) {
+            // Keep connection alive 2 minutes
+            if(count == 120) {
                 closeSocket();
                 return;
             }

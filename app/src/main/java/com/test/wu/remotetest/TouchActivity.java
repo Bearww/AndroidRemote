@@ -2,8 +2,11 @@ package com.test.wu.remotetest;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.content.DialogInterface;
 import android.widget.Button;
@@ -11,11 +14,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 /**
  * Created by Wu on 2016/6/28.
  */
-public class Touch extends Activity{
+public class TouchActivity extends Activity {
+
+    private Context context;
 
     private EditText ipField;
     private SeekBar sensitivity;
@@ -39,6 +45,8 @@ public class Touch extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_setting);
+
+        context = this;
 
         ipField = (EditText) findViewById(R.id.ipAddress);
         sensitivity = (SeekBar) findViewById(R.id.sensitivityBar);
@@ -69,6 +77,10 @@ public class Touch extends Activity{
         Button disconnectbutton = (Button) findViewById(R.id.btnDisconnect);
         disconnectbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                Toast.makeText(context, "" + size.x + ":" + size.y, Toast.LENGTH_LONG).show();
                 closeConnectionToServer();
             }
         });
@@ -80,7 +92,7 @@ public class Touch extends Activity{
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
 
-        String ip = prefs.getString(IP_PREF, "192.168.1.2");
+        String ip = prefs.getString(IP_PREF, Constants.SERVER_IP);
 
         boolean useCap = prefs.getBoolean(USE_SCREEN_CAP_PREF, true);
         int framerate = prefs.getInt(FRAME_RATE_PREF, 10);
@@ -119,7 +131,7 @@ public class Touch extends Activity{
         network_alert.show();
     }
 
-    private void serverUnreachablealert() {
+    private void serverUnreachableAlert() {
         AlertDialog alert = new AlertDialog.Builder(this).create();
         alert.setTitle("Server Connection Unavailable");
         alert.setMessage("Please make sure the server is running on your computer");
@@ -163,7 +175,7 @@ public class Touch extends Activity{
         for(int i = 0; i < 4; i++) {
             // every quarter second for one second check if the server is reachable
             if(appDel.connected()) {
-                Intent controller = new Intent(Touch.this, RemoteController.class);
+                Intent controller = new Intent(TouchActivity.this, RemoteController.class);
                 controller.putExtra("sensitivity" , Math.round( sensitivity.getProgress() / 20) + 1);
 
                 startActivity( controller );
@@ -175,7 +187,7 @@ public class Touch extends Activity{
         }
 
         if(!appDel.connected())
-            serverUnreachablealert();
+            serverUnreachableAlert();
     }
 
     private void closeConnectionToServer() {

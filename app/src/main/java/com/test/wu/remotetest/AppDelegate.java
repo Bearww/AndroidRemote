@@ -9,7 +9,7 @@ import android.net.ConnectivityManager;
  */
 public class AppDelegate extends Application {
 
-    private ClientThread client;
+    private ClientThread client, touch;
     private ClientListener listener;
     private RemoteController controller;
 
@@ -37,6 +37,13 @@ public class AppDelegate extends Application {
         cThread.start();
     }
 
+    public void createTouchThread(String ipAddress, int port) {
+        touch = new ClientThread(ipAddress, port);
+
+        Thread tThread = new Thread(touch);
+        tThread.start();
+    }
+
     public void createScreenCaptureThread(int listenerPort, int fps) {
         listener = new ClientListener(listenerPort, fps, this);
 
@@ -49,11 +56,21 @@ public class AppDelegate extends Application {
             client.sendMessage(message);
     }
 
+    public void sendInstruction(String instruction) {
+        if(touch != null)
+            touch.sendMessage(instruction);
+    }
+
     public void stopServer() {
         if(client != null && client.connected) {
             client.closeSocket();
         }
         client = null;
+
+        if(touch != null && touch.connected) {
+            touch.closeSocket();
+        }
+        touch = null;
 
         if(listener != null) {
             listener.closeSocket();
@@ -65,10 +82,10 @@ public class AppDelegate extends Application {
         *Test connection
         ***********************************************************************************/
     public boolean connected() {
-        if(client != null)
-            return client.connected;
+        if(client == null || touch == null)
+            return false;
 
-        return false;
+        return client.connected && touch.connected;
     }
 
     public boolean canAccessNetwork() {

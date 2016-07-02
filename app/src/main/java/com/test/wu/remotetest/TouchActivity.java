@@ -14,14 +14,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 /**
  * Created by Wu on 2016/6/28.
  */
 public class TouchActivity extends Activity {
-
-    private Context context;
 
     private EditText ipField;
     private SeekBar sensitivity;
@@ -45,8 +42,6 @@ public class TouchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_setting);
-
-        context = this;
 
         ipField = (EditText) findViewById(R.id.ipAddress);
         sensitivity = (SeekBar) findViewById(R.id.sensitivityBar);
@@ -80,7 +75,6 @@ public class TouchActivity extends Activity {
                 Display display = getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
-                Toast.makeText(context, "" + size.x + ":" + size.y, Toast.LENGTH_LONG).show();
                 closeConnectionToServer();
             }
         });
@@ -165,6 +159,7 @@ public class TouchActivity extends Activity {
             int fps = Integer.parseInt(frameRate.getText().toString());
 
             appDel.createClientThread(serverIp, serverPort);
+            appDel.createTouchThread(serverIp, serverPort + 1);
 
             if(useScreenCap.isChecked()) {
                 appDel.createScreenCaptureThread(listenPort, fps);
@@ -176,9 +171,9 @@ public class TouchActivity extends Activity {
             // every quarter second for one second check if the server is reachable
             if(appDel.connected()) {
                 Intent controller = new Intent(TouchActivity.this, RemoteController.class);
-                controller.putExtra("sensitivity" , Math.round( sensitivity.getProgress() / 20) + 1);
+                controller.putExtra("sensitivity" , Math.round(sensitivity.getProgress() / 20) + 1);
 
-                startActivity( controller );
+                startActivity(controller);
                 i = 6;
             }
             try {

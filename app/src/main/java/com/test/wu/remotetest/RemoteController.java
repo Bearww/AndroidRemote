@@ -170,11 +170,11 @@ public class RemoteController extends Activity implements OnTouchListener, OnKey
         }
     }
 
-    // send message to AppDelegate class
+    // send instruction to AppDelegate class
     // to be sent to server on client desktop
-    private void sendToAppDel(String message) {
-        if(true) {
-            appDel.sendMessage(message);
+    private void sendToAppDel(String instruction) {
+        if(appDel.connected()) {
+            appDel.sendInstruction(instruction);
         }
         else {
             //Toast.makeText(this, "Fail:" + message, Toast.LENGTH_LONG).show();

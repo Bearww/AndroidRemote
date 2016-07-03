@@ -12,25 +12,16 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/playPauseButton"
+        android:layout_above="@+id/rightButton"
         android:clickable="true"
         android:background="@android:color/holo_blue_dark"
-        android:id="@+id/mousePad"
-        android:layout_below="@+id/ipText" />
+        android:id="@+id/mousePad" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play/Pause"
-        android:id="@+id/playPauseButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Previous"
-        android:id="@+id/previousButton"
+        android:text="Left"
+        android:id="@+id/leftButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -38,20 +29,29 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
-        android:id="@+id/nextButton"
+        android:text="Right"
+        android:id="@+id/rightButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <EditText
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ipText"
+        android:text="Keyboard"
+        android:id="@+id/keyboardButton"
+        android:onClick="keyClickHandler"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/mousePad"
-        android:layout_alignEnd="@+id/mousePad" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <!-- This EditText remains hidden. It is used to send keyboard events to the server -->
+    <EditText android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textVisiblePassword"
+        android:layout_gravity="right"
+        android:focusable="true">
+    </EditText>
 
 </RelativeLayout>

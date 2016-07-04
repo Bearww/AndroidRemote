@@ -1,7 +1,10 @@
 package com.test.wu.remotetest;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -21,10 +24,12 @@ import android.util.Log;
  */
 public class ImageListener implements Runnable {
 
+    private RemoteActivity main;
     private InetAddress serverAddr;
     private int serverPort;
     private Socket socket;
     private PrintWriter out;
+    private InputStream in;
     byte[] buf = new byte[65000];
     private int framesPerSecond = -1;
     public boolean isConnected = false;
@@ -32,8 +37,9 @@ public class ImageListener implements Runnable {
     public static int DeviceWidth = 100;
     public static int DeviceHeight = 100;
 
-    public ImageListener(int port, int fps) {
+    public ImageListener(int port, int fps, RemoteActivity activity) {
         framesPerSecond = fps;
+        main = activity;
 
         try {
             serverAddr = InetAddress.getByName(Constants.SERVER_IP);
@@ -63,6 +69,7 @@ public class ImageListener implements Runnable {
             if (isConnected) {
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket
                         .getOutputStream())), true); //create output stream to send data to server
+                in = socket.getInputStream();
             }
         } catch (IOException e) {
             Log.e("remotedroid", "Error while creating OutWriter", e);
@@ -93,10 +100,10 @@ public class ImageListener implements Runnable {
     private void listen() {
         while (isConnected) {
             try {
-                socket.receive(dgp);
-                Bitmap bm = BitmapFactory.decodeByteArray(dgp.getData(), 0, 65000);
+                in.read(buf);
+                Bitmap bm = BitmapFactory.decodeByteArray(buf, 0, 65000);
                 Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
-                delegate.getController().setImage(bm);
+                main.setImage(bm);
             } catch (Exception e) {
                 e.printStackTrace();
             }

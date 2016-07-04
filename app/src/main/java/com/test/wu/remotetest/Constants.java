@@ -8,9 +8,9 @@ import android.graphics.Point;
 public class Constants {
     public static final String SERVER_IP = "192.168.137.74";
     public static final int SERVER_PORT = 6060;
-    public static final String PLAY = "play";
-    public static final String NEXT = "next";
-    public static final String PREVIOUS = "previous";
+
+    public static final int FRAMES_PER_SECOND = 10;
+
     public static final String MOUSE_LEFT_CLICK = "left_click";
 
     public static final char LEFTMOUSEDOWN = 'a';
@@ -41,7 +41,8 @@ public class Constants {
     public static String createMoveMouseMessage(float x, float y) {
         int intx = Math.round(x);
         int inty = Math.round(y);
-        return "" + MOVEMOUSE + intx + DELIMITER + inty;
+        //return "" + MOVEMOUSE + intx + DELIMITER + inty;
+        return intx + "," + inty;
     }
 
     public static Point parseMoveMouseMessage(String message) {

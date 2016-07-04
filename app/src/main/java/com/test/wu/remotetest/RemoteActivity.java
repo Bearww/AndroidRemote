@@ -3,6 +3,7 @@ package com.test.wu.remotetest;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -24,8 +25,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -40,10 +39,9 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
     Context context;
     Button leftButton;
     Button rightButton;
-    TextView mousePad;
+    View mousePad;
 
     private boolean isConnected = false;
-    private boolean mouseMoved = false;
     private boolean displayKeyboard = false;
     private Socket socket;
     private PrintWriter out;
@@ -53,8 +51,6 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
 
     private float initX = 0;
     private float initY = 0;
-    private float disX = 0;
-    private float disY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +67,18 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         // This activity extends View.OnTouchListener, set this as onTouchListener for all buttons
         leftButton.setOnTouchListener(this);
         rightButton.setOnTouchListener(this);
+
+        // Set the width of the buttons to half the screen size
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        leftButton.setWidth(width / 2);
+        rightButton.setWidth(width / 2);
+
+        ImageListener.DeviceWidth = width;
+        ImageListener.DeviceHeight = size.y - leftButton.getHeight();
 
         // Get reference to the EditText acting as editText
         EditText editText = (EditText) findViewById(R.id.editText);
@@ -89,43 +97,13 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         });
 
         // Get reference to the TextView acting as mousepad
-        mousePad = (TextView)findViewById(R.id.mousePad);
+        mousePad = findViewById(R.id.mousePad);
 
-        // Capture finger taps and movement on the textview
-        mousePad.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(isConnected && out != null) {
-                    switch(event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // Save X and Y positions when user touches the TextView
-                            initX = event.getX();
-                            initY = event.getY();
-                            mouseMoved = false;
-                        break;
-                        case MotionEvent.ACTION_MOVE:
-                            disX = event.getX()- initX; // Mouse movement in x direction
-                            disY = event.getY()- initY; // Mouse movement in y direction
+        // Capture finger taps and movement on the view
+        mousePad.setOnTouchListener(this);
 
-                            /* Set init to new position so that continuous mouse movement is captured */
-                            initX = event.getX();
-                            initY = event.getY();
-                            if(disX != 0 || disY != 0) {
-                                out.println(disX + "," + disY); //send mouse movement to server
-                            }
-                            mouseMoved = true;
-                        break;
-                        case MotionEvent.ACTION_UP:
-                            // Consider a tap only if usr did not move mouse after ACTION_DOWN
-                            if(!mouseMoved) {
-                                out.println(Constants.MOUSE_LEFT_CLICK);
-                            }
-                        break;
-                    }
-                }
-                return true;
-            }
-        });
+        //Thread listen = new Thread(new ImageListener(Constants.SERVER_PORT, Constants.FRAMES_PER_SECOND, this));
+        //listen.start();
     }
 
     private void setImageRequestSizes() {
@@ -137,14 +115,15 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         width = metrics.widthPixels;
         height = metrics.heightPixels;
 
-        //ClientListener.DeviceWidth = (int)(screenRatio * width);
-        //ClientListener.DeviceHeight = (int)(screenRatio * height);
-        //Log.e("REQUESTINGSIZE", screenRatio + " " + ClientListener.DeviceWidth + " " + ClientListener.DeviceHeight);
+        ImageListener.DeviceWidth = (int)(screenRatio * width);
+        ImageListener.DeviceHeight = (int)(screenRatio * height);
+        Log.e("REQUESTINGSIZE", screenRatio + " " + ImageListener.DeviceWidth + " " + ImageListener.DeviceHeight);
     }
 
     private void sendMessage(String message) {
         if (isConnected && out != null) {
             // Send message to server
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             out.println(message);
         }
     }
@@ -174,8 +153,9 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
 
         // Noinspection SimplifiableIfStatement
         if(id == R.id.action_connect) {
+            Toast.makeText(context, "Try to connect server", Toast.LENGTH_SHORT).show();
             ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
-            connectPhoneTask.execute(Constants.SERVER_IP); //try to connect to server in another thread
+            connectPhoneTask.execute(Constants.SERVER_IP); // Try to connect to server in another thread
             return true;
         }
 
@@ -201,26 +181,26 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         return true;
     }
 
-    // send a mouse message
+    // Send a mouse message
     private void mousePadHandler(MotionEvent event) {
         int action = event.getAction();
         int touchCount = event.getPointerCount();
 
-        // if a single touch
+        // If a single touch
         if(touchCount == 1) {
             switch(action) {
-                case 0:	// touch down
+                case 0:	// Touch down
                     initX = event.getX();
                     initY = event.getY();
                     break;
 
-                case 1:	// touch up
+                case 1:	// Touch up
                     long deltaTime = event.getEventTime() - event.getDownTime();
                     if(deltaTime < 250)
                         sendMessage(Constants.LEFTCLICK);
                     break;
 
-                case 2: // moved
+                case 2: // Moved
                     float deltaX = (initX - event.getX()) * -1;
                     float deltaY = (initY - event.getY()) * -1;
 
@@ -235,7 +215,7 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
             }
         }
 
-        // if two touches send scroll message
+        // If two touches send scroll message
         // based off MAC osx multi touch scrolls up and down
         else if(touchCount == 2) {
             if(action == 2) {

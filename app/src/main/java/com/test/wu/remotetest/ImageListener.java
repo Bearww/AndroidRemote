@@ -2,6 +2,7 @@ package com.test.wu.remotetest;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +30,7 @@ public class ImageListener implements Runnable {
     private int serverPort;
     private Socket socket;
     private PrintWriter out;
-    private InputStream in;
+    private DataInputStream in;
     byte[] buf = new byte[65000];
     private int framesPerSecond = -1;
     public boolean isConnected = false;
@@ -67,9 +68,7 @@ public class ImageListener implements Runnable {
             if (isConnected) {
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket
                         .getOutputStream())), true); //create output stream to send data to server
-                in = socket.getInputStream();
-
-                sendMessage("Connected");
+                in = new DataInputStream(socket.getInputStream());
 
                 listen();
             }
@@ -102,10 +101,12 @@ public class ImageListener implements Runnable {
     private void listen() {
         while (isConnected) {
             try {
-                in.read(buf);
-                Bitmap bm = BitmapFactory.decodeByteArray(buf, 0, 65000);
-                Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
-                main.setImage(bm);
+                int count = 0;
+                if((count = in.read(buf)) > 0) {
+                    Bitmap bm = BitmapFactory.decodeByteArray(buf, 0, count);
+                    Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
+                    main.setImage(bm);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

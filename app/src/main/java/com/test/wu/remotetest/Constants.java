@@ -6,7 +6,9 @@ import android.graphics.Point;
  * Created by Wu on 2016/6/25.
  */
 public class Constants {
+    //public static final String SERVER_IP = "169.254.156.204";
     public static final String SERVER_IP = "192.168.137.74";
+    //public static final String SERVER_IP = "192.168.137.1";
     public static final int SERVER_PORT = 6060;
     public static final int LISTEN_PORT = 6080;
 
@@ -42,8 +44,8 @@ public class Constants {
     public static String createMoveMouseMessage(float x, float y) {
         int intx = Math.round(x);
         int inty = Math.round(y);
-        //return "" + MOVEMOUSE + intx + DELIMITER + inty;
-        return intx + "," + inty;
+        return "" + MOVEMOUSE + intx + DELIMITER + inty;
+        //return intx + "," + inty;
     }
 
     public static Point parseMoveMouseMessage(String message) {

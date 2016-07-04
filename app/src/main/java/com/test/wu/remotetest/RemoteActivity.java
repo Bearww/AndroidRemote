@@ -123,7 +123,7 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
     private void sendMessage(String message) {
         if (isConnected && out != null) {
             // Send message to server
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             out.println(message);
         }
     }

@@ -102,8 +102,8 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         // Capture finger taps and movement on the view
         mousePad.setOnTouchListener(this);
 
-        //Thread listen = new Thread(new ImageListener(Constants.SERVER_PORT, Constants.FRAMES_PER_SECOND, this));
-        //listen.start();
+        Thread listen = new Thread(new ImageListener(Constants.LISTEN_PORT, Constants.FRAMES_PER_SECOND, this));
+        listen.start();
     }
 
     private void setImageRequestSizes() {

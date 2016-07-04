@@ -58,8 +58,6 @@ public class ImageListener implements Runnable {
             int frames = 10000 / framesPerSecond;
 
             timer.scheduleAtFixedRate(getImageTask, 0, frames);
-
-            listen();
         } catch (Exception e) {
             Log.e("ClientActivity", "Client Connection Error", e);
             isConnected = false;
@@ -70,6 +68,10 @@ public class ImageListener implements Runnable {
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket
                         .getOutputStream())), true); //create output stream to send data to server
                 in = socket.getInputStream();
+
+                sendMessage("Connected");
+
+                listen();
             }
         } catch (IOException e) {
             Log.e("remotedroid", "Error while creating OutWriter", e);

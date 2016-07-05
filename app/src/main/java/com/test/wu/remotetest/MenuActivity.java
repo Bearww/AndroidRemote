@@ -1,8 +1,11 @@
 package com.test.wu.remotetest;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private MeetingJoinTask mJoinTask = null;
+
+    private EditText meetingID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,16 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        meetingID = (EditText) findViewById(R.id.editText);
+
+        Button meetingJoinButton = (Button) findViewById(R.id.button);
+        meetingJoinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptJoin();
+            }
+        });
     }
 
     @Override
@@ -80,22 +99,100 @@ public class MenuActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_meeting_join) {
+            // Handle the meeting create/join action
+        } else if (id == R.id.nav_meeting_list) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_settings) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void attemptJoin() {
+        if(mJoinTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        meetingID.setError(null);
+
+        // Store values at the time of the login attempt.
+        String meeting = meetingID.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(meeting)) {
+            meetingID.setError(getString(R.string.error_field_required));
+            focusView = meetingID;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            //showProgress(true);
+            mJoinTask = new MeetingJoinTask(meeting);
+            mJoinTask.execute((Void) null);
+        }
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class MeetingJoinTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final int mMeetingID;
+
+        MeetingJoinTask(String meetingID) {
+            mMeetingID = Integer.parseInt(meetingID);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return false;
+            }
+
+            // Check meeting id is online
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mJoinTask = null;
+            //showProgress(false);
+
+            if (success) {
+                finish();
+                Intent intent = new Intent(MenuActivity.this, RemoteActivity.class);
+                startActivity(intent);
+            } else {
+                //mPasswordView.setError(getString(R.string.error_incorrect_password));
+                //mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mJoinTask = null;
+            //showProgress(false);
+        }
     }
 }

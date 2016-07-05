@@ -102,6 +102,10 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         // Capture finger taps and movement on the view
         mousePad.setOnTouchListener(this);
 
+        // Try to connect to server in another thread
+        //ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
+        //connectPhoneTask.execute(Constants.SERVER_IP);
+
         Thread listen = new Thread(new ImageListener(Constants.LISTEN_PORT, Constants.FRAMES_PER_SECOND, this));
         listen.start();
     }
@@ -152,10 +156,20 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         int id = item.getItemId();
 
         // Noinspection SimplifiableIfStatement
-        if(id == R.id.action_connect) {
-            Toast.makeText(context, "Try to connect server", Toast.LENGTH_SHORT).show();
-            ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
-            connectPhoneTask.execute(Constants.SERVER_IP); // Try to connect to server in another thread
+        if(id == R.id.action_cursor) {
+            sendMessage(Constants.ARROW);
+            return true;
+        } else if(id == R.id.action_brush) {
+            sendMessage(Constants.BRUSH);
+            return true;
+        } else if(id == R.id.action_eraser) {
+            sendMessage(Constants.ERASER);
+            return true;
+        } else if(id == R.id.action_before) {
+            sendMessage(Constants.BEFOREPAGE);
+            return true;
+        } else if(id == R.id.action_next) {
+            sendMessage(Constants.NEXTPAGE);
             return true;
         }
 

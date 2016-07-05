@@ -7,8 +7,8 @@ import android.graphics.Point;
  */
 public class Constants {
     //public static final String SERVER_IP = "169.254.156.204";
-    public static final String SERVER_IP = "192.168.137.74";
-    //public static final String SERVER_IP = "192.168.137.1";
+    //public static final String SERVER_IP = "192.168.137.74";
+    public static final String SERVER_IP = "192.168.137.1";
     public static final int SERVER_PORT = 6060;
     public static final int LISTEN_PORT = 6080;
 
@@ -26,6 +26,13 @@ public class Constants {
 
     public static final char SCROLLUP = 'h';
     public static final char SCROLLDOWN = 'i';
+
+    public static final char ARROW = 'm';
+    public static final char BRUSH = 'n';
+    public static final char ERASER = 'o';
+
+    public static final char BEFOREPAGE = 'q';
+    public static final char NEXTPAGE = 'r';
 
     public static final char KEYBOARD = 'k';
     public static final char KEYCODE = 'l';

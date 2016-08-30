@@ -2,6 +2,7 @@ package com.test.wu.remotetest;
 
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -37,9 +39,11 @@ import java.net.Socket;
 public class RemoteActivity extends ActionBarActivity implements View.OnTouchListener, View.OnKeyListener {
 
     Context context;
-    Button leftButton;
+    public Button leftButton;
     Button rightButton;
-    View mousePad;
+    ImageView mousePad;
+
+    Canvas canvas;
 
     private boolean isConnected = false;
     private boolean displayKeyboard = false;
@@ -96,15 +100,15 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
             }
         });
 
-        // Get reference to the TextView acting as mousepad
-        mousePad = findViewById(R.id.mousePad);
+        // Get reference to the ImageView acting as mousepad
+        mousePad = (ImageView) findViewById(R.id.mousePad);
 
         // Capture finger taps and movement on the view
         mousePad.setOnTouchListener(this);
 
         // Try to connect to server in another thread
-        //ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
-        //connectPhoneTask.execute(Constants.SERVER_IP);
+        ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
+        connectPhoneTask.execute(Constants.SERVER_IP);
 
         Thread listen = new Thread(new ImageListener(Constants.LISTEN_PORT, Constants.FRAMES_PER_SECOND, this));
         listen.start();
@@ -279,15 +283,17 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         }
     }
 
-    public void setImage(final Bitmap bit) {
+    public void setImage(final Bitmap map) {
+        /*
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             public void run() {
-                View layout = findViewById(R.id.mousePad);
-                BitmapDrawable drawable = new BitmapDrawable(bit);
-                layout.setBackgroundDrawable(drawable);
+                canvas.drawBitmap(map, 0, 0, null);
             }
         });
+        */
+        mousePad.setImageBitmap(map);
+        mousePad.postInvalidate();
     }
 
     @Override

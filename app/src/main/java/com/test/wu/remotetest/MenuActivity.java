@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -52,13 +53,25 @@ public class MenuActivity extends AppCompatActivity
 
         meetingID = (EditText) findViewById(R.id.editText);
 
-        Button meetingJoinButton = (Button) findViewById(R.id.button);
+        Button meetingCreateButton = (Button) findViewById(R.id.createButton);
+        meetingCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptCreate();
+            }
+        });
+
+        Button meetingJoinButton = (Button) findViewById(R.id.joinButton);
         meetingJoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptJoin();
             }
         });
+
+        // Template
+        // Action of toolbar at bottom
+
     }
 
     @Override
@@ -112,6 +125,39 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
+    private void attemptCreate() {
+        if(mJoinTask != null) {
+            return;
+        }
+
+        // Get free id from the server.
+        String meeting = "1";
+
+        boolean cancel = false;
+        View focusView = null;
+
+/*
+        // Check for a valid meeting id.
+        if (TextUtils.isEmpty(meeting)) {
+            meetingID.setError(getString(R.string.error_field_required));
+            focusView = meetingID;
+            cancel = true;
+        }
+*/
+
+        if (cancel) {
+            // There was an error; don't attempt join and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user join attempt.
+            //showProgress(true);
+            mJoinTask = new MeetingJoinTask(meeting);
+            mJoinTask.execute((Void) null);
+        }
+    }
+
     private void attemptJoin() {
         if(mJoinTask != null) {
             return;
@@ -126,7 +172,7 @@ public class MenuActivity extends AppCompatActivity
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid email address.
+        // Check for a valid meeting id.
         if (TextUtils.isEmpty(meeting)) {
             meetingID.setError(getString(R.string.error_field_required));
             focusView = meetingID;
@@ -134,12 +180,12 @@ public class MenuActivity extends AppCompatActivity
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
+            // There was an error; don't attempt join and focus the first
             // form field with an error.
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the user join attempt.
             //showProgress(true);
             mJoinTask = new MeetingJoinTask(meeting);
             mJoinTask.execute((Void) null);
@@ -147,7 +193,7 @@ public class MenuActivity extends AppCompatActivity
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * Represents an asynchronous join task
      * the user.
      */
     public class MeetingJoinTask extends AsyncTask<Void, Void, Boolean> {
@@ -181,7 +227,7 @@ public class MenuActivity extends AppCompatActivity
 
             if (success) {
                 finish();
-                Intent intent = new Intent(MenuActivity.this, RemoteActivity.class);
+                Intent intent = new Intent(MenuActivity.this, MeetingActivity.class);
                 startActivity(intent);
             } else {
                 //mPasswordView.setError(getString(R.string.error_incorrect_password));

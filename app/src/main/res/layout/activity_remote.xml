@@ -9,11 +9,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.test.wu.remotetest.RemoteActivity">
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rightButton"
-        android:clickable="true"
         android:background="@android:color/holo_blue_dark"
         android:id="@+id/mousePad" />
 

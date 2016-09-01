@@ -227,7 +227,7 @@ public class MenuActivity extends AppCompatActivity
 
             if (success) {
                 finish();
-                Intent intent = new Intent(MenuActivity.this, MeetingActivity.class);
+                Intent intent = new Intent(MenuActivity.this, RemoteActivity.class);
                 startActivity(intent);
             } else {
                 //mPasswordView.setError(getString(R.string.error_incorrect_password));

@@ -12,7 +12,7 @@ public class Constants {
     public static final int SERVER_PORT = 6060;
     public static final int LISTEN_PORT = 6080;
 
-    public static final int FRAMES_PER_SECOND = 10;
+    public static final int FRAMES_PER_SECOND = 1;
 
     public static final String MOUSE_LEFT_CLICK = "left_click";
 

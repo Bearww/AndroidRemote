@@ -283,6 +283,10 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         }
     }
 
+    public void testMsg(final String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
     public void setImage(final Bitmap map) {
         /*
         Handler handler = new Handler(Looper.getMainLooper());

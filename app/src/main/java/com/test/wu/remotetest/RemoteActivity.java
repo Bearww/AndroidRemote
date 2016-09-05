@@ -1,17 +1,15 @@
 package com.test.wu.remotetest;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.os.Bundle;
-import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -43,7 +41,7 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
     Button rightButton;
     ImageView mousePad;
 
-    Canvas canvas;
+    public Handler messageHandler;
 
     private boolean isConnected = false;
     private boolean displayKeyboard = false;
@@ -105,6 +103,22 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
 
         // Capture finger taps and movement on the view
         mousePad.setOnTouchListener(this);
+
+        messageHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+
+                switch(msg.what) {
+                    case Constants.DO_UI_TEXT:
+                        testMsg("" + msg.getData().getInt("Text"));
+                        break;
+                    case Constants.DO_UI_IMAGE:
+                        setImage(msg.getData().getByteArray("Image"));
+                        break;
+                }
+            }
+        };
 
         // Try to connect to server in another thread
         ConnectPhoneTask connectPhoneTask = new ConnectPhoneTask();
@@ -287,15 +301,9 @@ public class RemoteActivity extends ActionBarActivity implements View.OnTouchLis
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
-    public void setImage(final Bitmap map) {
-        /*
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
-                canvas.drawBitmap(map, 0, 0, null);
-            }
-        });
-        */
+    public void setImage(final byte[] image) {
+        Bitmap map = BitmapFactory.decodeByteArray(image, 0, image.length);
+
         mousePad.setImageBitmap(map);
         mousePad.postInvalidate();
     }

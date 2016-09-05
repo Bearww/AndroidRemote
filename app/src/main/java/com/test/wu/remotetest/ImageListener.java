@@ -1,27 +1,24 @@
 package com.test.wu.remotetest;
 
-import java.io.BufferedReader;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Message;
+import android.util.Log;
+
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.widget.Toast;
 
 public class ImageListener implements Runnable {
 
@@ -31,7 +28,7 @@ public class ImageListener implements Runnable {
     private Socket socket;
     private PrintWriter out;
     private InputStream in;
-    byte[] buf = new byte[65000];
+    //byte[] buf = new byte[65000];
     private int framesPerSecond = 1;
     public boolean isConnected = false;
 
@@ -107,16 +104,53 @@ public class ImageListener implements Runnable {
 
                 byte[] lengthMsg = new byte[4];
                 in.read(lengthMsg);
+
                 int length = ByteBuffer.wrap(lengthMsg).asIntBuffer().get();
 
-                in.read(buf, 0, length);
-                Bitmap bm = BitmapFactory.decodeByteArray(buf, 0, length);
-                Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
-                main.setImage(bm);
-                sendMessage("App Test");
+                byte[] buf = new byte[length];
+                //in.read(buf);
+                for(int i = 0; i < length; i++) {
+                    buf[i] = (byte) in.read();
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putByteArray("Image", buf);
+
+                Message uiMessage = new Message();
+                uiMessage.setData(bundle);
+                uiMessage.what = Constants.DO_UI_IMAGE;
+                main.messageHandler.sendMessage(uiMessage);
+
+                //Bitmap bm = BitmapFactory.decodeByteArray(buf, 0, length);
+
+                //saveImage(bm);
+
+                //Log.e("REQUESTINGSIZE", "SIZERECV: " + bm.getWidth() + bm.getHeight());
+                //main.setImage(bm);
+                //sendMessage("App Test");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void saveImage(Bitmap finalBitmap) {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/saved_images");
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-"+ n +".jpg";
+        File file = new File(myDir, fname);
+        if (file.exists ()) file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

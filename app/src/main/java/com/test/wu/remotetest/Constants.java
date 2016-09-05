@@ -11,6 +11,10 @@ public class Constants {
     public static final String SERVER_IP = "169.254.156.204";
     public static final int SERVER_PORT = 6060;
     public static final int LISTEN_PORT = 6080;
+    public static final int SERVER_RECVIMAGE = 6090;
+
+    public static final int DO_UI_IMAGE = 6001;
+    public static final int DO_UI_TEXT = 6002;
 
     public static final int FRAMES_PER_SECOND = 1;
 

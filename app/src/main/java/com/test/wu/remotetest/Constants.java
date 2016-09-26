@@ -1,6 +1,9 @@
 package com.test.wu.remotetest;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by Wu on 2016/6/25.
@@ -15,6 +18,10 @@ public class Constants {
 
     public static final int DO_UI_IMAGE = 6001;
     public static final int DO_UI_TEXT = 6002;
+
+    public static final String ROW_ID = "row_id";
+    public static final String DOC_NAME = "name";
+    public static final String DOC_LINK = "link";
 
     public static final int FRAMES_PER_SECOND = 1;
 
@@ -46,6 +53,7 @@ public class Constants {
     public static final char MOVEMOUSE = 'p';
 
     public static final char REQUESTIMAGE = 'I';
+    public static final char PROVIDEIMAGE = 'P';
 
     /*
         *  Returns a string in the format that can be laster parsed
@@ -62,5 +70,11 @@ public class Constants {
     public static Point parseMoveMouseMessage(String message) {
         String[] tokens = message.substring(1).split("" + Constants.DELIMITER);
         return new Point(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
+    }
+
+    public static byte[] createBitmapMessage(Bitmap map) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        map.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+        return stream.toByteArray();
     }
 }

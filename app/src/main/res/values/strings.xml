@@ -37,4 +37,19 @@
     <string name="title_item_list">會議</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="prompt_meeting_id">會議編號</string>
+    <string name="menuitem_add_document">加入文件</string>
+    <string name="doc_label_name">Name:</string>
+    <string name="link_label_name">Link:</string>
+    <string name="menuitem_edit_document">Edit</string>
+    <string name="menuitem_delete_document">Delete</string>
+    <string name="confirmTitle">Delete</string>
+    <string name="confirmMessage">刪除文件？</string>
+    <string name="errorTitle">Error</string>
+    <string name="errorMessage">Error!</string>
+    <string name="errorButton">OK</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="document_name">文件名稱</string>
+    <string name="document_link">文件連結</string>
+    <string name="button_save_document">Save Document</string>
 </resources>

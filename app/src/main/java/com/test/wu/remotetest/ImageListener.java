@@ -28,7 +28,7 @@ public class ImageListener implements Runnable {
     private Socket socket;
     private PrintWriter out;
     private InputStream in;
-    //byte[] buf = new byte[65000];
+
     private int framesPerSecond = 1;
     public boolean isConnected = false;
 
@@ -77,12 +77,12 @@ public class ImageListener implements Runnable {
     private TimerTask getImageTask = new TimerTask() {
         @Override
         public void run() {
-            String message = new String("" +
+            String message = "" +
                     Constants.REQUESTIMAGE +
                     Constants.DELIMITER +
                     DeviceWidth +
                     Constants.DELIMITER +
-                    DeviceHeight);
+                    DeviceHeight;
 
             sendMessage(message);
         }

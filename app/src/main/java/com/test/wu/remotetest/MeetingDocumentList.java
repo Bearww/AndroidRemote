@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -124,7 +123,7 @@ public class MeetingDocumentList extends ListFragment
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
         new GetDocumentsTask().execute((Object[]) null);
-        return (Loader<Cursor>) mAdapter.getCursor();
+        return null;
     }
 
     // Called when a previously created loader has finished loading
@@ -145,6 +144,12 @@ public class MeetingDocumentList extends ListFragment
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
+        // Create an intent to launch the ViewDocument activity
+        Intent viewDoc = new Intent(getActivity(), ViewDocument.class);
+
+        // Pass the selected contact's row ID as an extra with the intent
+        viewDoc.putExtra(Constants.ROW_ID, id);
+        startActivity(viewDoc);
     }
 
     @Override
@@ -154,19 +159,6 @@ public class MeetingDocumentList extends ListFragment
         startActivity(addNewDocument);
         return super.onOptionsItemSelected(item);
     }
-
-    // Event listener that responds to the user touching a document's name int the listview
-    AdapterView.OnItemClickListener viewDocumentListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // Create an intent to launch the ViewDocument activity
-            Intent viewDoc = new Intent(getActivity(), ViewDocument.class);
-
-            // Pass the selected contact's row ID as an extra with the intent
-            viewDoc.putExtra(Constants.ROW_ID, id);
-            startActivity(viewDoc);
-        }
-    };
 
     // Performs database query outside GUI thread
     private class GetDocumentsTask extends AsyncTask<Object, Object, Cursor> {
@@ -178,9 +170,9 @@ public class MeetingDocumentList extends ListFragment
             dbConnector.open();
 
             // TODO Remove manual doc list
-            dbConnector.insertDocument("Example1", "www.csie.nuk.edu.tw/~wuch/course/csb051/csb051-python.pdf");
-            dbConnector.insertDocument("Example2", "123");
-            dbConnector.insertDocument("Example3", "456");
+            //dbConnector.insertDocument("Example1", "www.csie.nuk.edu.tw/~wuch/course/csb051/csb051-python.pdf");
+            //dbConnector.insertDocument("Example2", "123");
+            //dbConnector.insertDocument("Example3", "456");
 
             // Get a cursor containing call documents
             return dbConnector.getAllDocuments();

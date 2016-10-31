@@ -64,7 +64,7 @@ public class ViewDocument extends Activity {
 
             // Get the column index for each data item
             int nameIndex = cursor.getColumnIndex("name");
-            int linkIndex = cursor.getColumnIndex("index");
+            int linkIndex = cursor.getColumnIndex("link");
 
             // Fill TextViews with the retrieved data
             nameTextView.setText(cursor.getString(nameIndex));

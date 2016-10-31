@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/controller_text"
+        android:id="@+id/controllerText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/controller_text"
+        android:id="@+id/controllerTextView"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/controllerText"
+        android:layout_toEndOf="@id/controllerText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="設定"
+        android:id="@+id/controllerButton"
+        android:layout_toRightOf="@id/controllerTextView"
+        android:layout_toEndOf="@id/controllerTextView" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/chairman_text"
+        android:id="@+id/chairmanText"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:layout_below="@id/controllerText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/chairman_text"
+        android:id="@+id/chairmanTextView"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:layout_below="@id/controllerTextView"
+        android:layout_toRightOf="@id/chairmanText"
+        android:layout_toEndOf="@id/chairmanText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="修改"
+        android:id="@+id/chairmanButton"
+        android:layout_below="@id/controllerTextView"
+        android:layout_alignLeft="@id/controllerButton"
+        android:layout_alignStart="@id/controllerButton" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/presenter_text"
+        android:id="@+id/presenterText"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:layout_below="@id/chairmanText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/presenter_text"
+        android:id="@+id/presenterTextView"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:layout_below="@id/chairmanTextView"
+        android:layout_toRightOf="@id/chairmanText"
+        android:layout_toEndOf="@id/chairmanText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="修改"
+        android:id="@+id/presenterButton"
+        android:layout_below="@id/chairmanTextView"
+        android:layout_alignLeft="@id/chairmanButton"
+        android:layout_alignStart="@id/chairmanButton" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/member_text"
+        android:id="@+id/memberText"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:layout_below="@id/presenterText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="36pt"
+        android:layout_height="24pt"
+        android:text="@string/member_text"
+        android:id="@+id/memberTextView"
+        android:paddingLeft="6pt"
+        android:paddingTop="6pt"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:layout_below="@id/presenterTextView"
+        android:layout_toRightOf="@id/memberText"
+        android:layout_toEndOf="@id/memberText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="新增成員"
+        android:id="@+id/memberButton"
+        android:layout_below="@id/presenterTextView"
+        android:layout_alignLeft="@id/chairmanButton"
+        android:layout_alignStart="@id/chairmanButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ask"
+        android:id="@+id/askButton"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vote"
+        android:id="@+id/voteButton"
+        android:layout_alignTop="@+id/askButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Vote"
+        android:id="@+id/createVoteButton"
+        android:layout_alignBottom="@+id/voteButton"
+        android:layout_toLeftOf="@+id/voteButton"
+        android:layout_toStartOf="@+id/voteButton" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/askListView"
+        android:layout_below="@+id/askButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>

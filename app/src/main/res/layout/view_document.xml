@@ -3,7 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,7 +17,7 @@
                 android:text="@string/doc_label_name" />
             <TextView
                 android:id="@+id/nameTextView"
-                style="@style/DocumentTextView" />
+                android:textColor="@color/accent_material_dark" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -30,7 +29,8 @@
                 android:text="@string/link_label_name" />
             <TextView
                 android:id="@+id/linkTextView"
-                style="@style/DocumentTextView" />
+                android:textColor="@color/accent_material_dark" />
         </TableRow>
+
     </TableLayout>
 </LinearLayout>

@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".RemoteActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity" >
 
-    <item android:id="@+id/action_before" android:title="@string/action_before"
-        android:icon="@drawable/ic_navigate_before_black_24dp" app:showAsAction="always" />
+    <item android:id="@+id/action_search"
+        android:title="@string/action_search"
+        android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
+        android:hint="@string/action_search"
+        android:orderInCategory="100"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
 
-    <item android:id="@+id/action_next" android:title="@string/action_next"
-        android:icon="@drawable/ic_navigate_next_black_24dp" app:showAsAction="always" />
+    <item android:id="@+id/action_backup"
+        android:title="@string/action_backup"
+        android:orderInCategory="101"
+        app:showAsAction="never" />
 
-    <group android:checkableBehavior="single">
+    <item android:id="@+id/action_restore"
+        android:title="@string/action_restore"
+        android:orderInCategory="102"
+        app:showAsAction="never" />
 
-        <item android:id="@+id/action_cursor" android:title="@string/action_cursor"
-            android:icon="@drawable/ic_call_made_black_24dp" app:showAsAction="always" />
+    <item android:id="@+id/action_rate_app"
+        android:title="@string/action_rate_app"
+        android:orderInCategory="103"
+        app:showAsAction="never" />
 
-        <item android:id="@+id/action_brush" android:title="@string/action_brush"
-            android:icon="@drawable/ic_brush_black_24dp" app:showAsAction="always" />
-
-        <item android:id="@+id/action_eraser" android:title="@string/action_eraser"
-            android:icon="@drawable/ic_clear_black_24dp" app:showAsAction="always" />
-
-    </group>
-<!--
-    <item android:id="@+id/action_connect" android:title="@string/action_connect"
-        android:icon="@drawable/ic_menu_share" app:showAsAction="ifRoom" />
-
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
--->
 </menu>

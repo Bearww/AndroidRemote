@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/askText"
+        android:hint="Type your question"
+        android:layout_below="@+id/spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColorHint="@color/black_50"
+        android:textColor="@color/black_95" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show your name?"
+        android:id="@+id/publicCheck"
+        android:layout_below="@+id/askText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="35dp"
+        android:textColor="@color/black_95" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:spinnerMode="dropdown"
+        android:textColor="@color/black_95"
+        android:backgroundTint="@color/theme_primary"
+        android:foregroundTint="@color/theme_primary"
+        android:background="@color/abc_background_cache_hint_selector_material_light" />
+
+</RelativeLayout>

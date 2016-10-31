@@ -28,7 +28,7 @@ public class TabFragment3 extends Fragment {
         screenShot = (Button) view.findViewById(R.id.ScreenShot);
         screenImage = (WebView) view.findViewById(R.id.ScreenImage);
 
-        String pdfUrl = "www.csie.nuk.edu.tw/~wuch/course/csb051/csb051-python.pdf";
+        String pdfUrl = "www.csie.nuk.edu.tw/~wuch/course/csb632/csb632-00.pdf";
         //screenImage.getSettings().setJavaScriptEnabled(true);
         screenImage.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=" + pdfUrl);
 
@@ -39,10 +39,10 @@ public class TabFragment3 extends Fragment {
             public void onClick(View v)
             {
                 if(!isConnect) {
-                    Thread provider = new Thread(new ImageProvider(Constants.PROVIDEIMAGE, screenImage, getActivity()));
+                    Thread provider = new Thread(new ImageProvider(Constants.SERVER_RECVIMAGE, screenImage, getActivity()));
                     provider.start();
                     //TODO change connection checking
-                    isConnect = true;
+                    //isConnect = true;
                 }
             }
         });

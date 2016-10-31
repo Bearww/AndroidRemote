@@ -84,6 +84,8 @@ public class ImageProvider implements Runnable {
         @Override
         public void run() {
             Bitmap screenShot = getScreenShot();
+            // TODO Check image in storage
+            //saveImage(screenShot);
             byte[] img = Constants.createBitmapMessage(screenShot);
             sendMessage(img);
         }

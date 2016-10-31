@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DatabaseConnector {
 
     // Database name
-    private static final String DATABASE_NAME = "test.db";
+    private static final String DATABASE_NAME = "testa.db";
     private SQLiteDatabase database;
     private DatabaseOpenHelper databaseOpenHelper;
 
@@ -51,19 +51,21 @@ public class DatabaseConnector {
     }
 
     // Return a cursor with all document information in the database
-    public Cursor getAllDocuments() {
+    public synchronized Cursor getAllDocuments() {
         open();
-        Cursor cursor = database.query("documents", new String[]{"_id", "name"}, null, null, null, null, "name");
-        close();
-        return cursor;
+        //Cursor cursor = database.query("documents", new String[]{"_id", "name"}, null, null, null, null, "name");
+        //close();
+        //return cursor;
+        return database.query("documents", new String[]{"_id", "name"}, null, null, null, null, "name");
     }
 
     // Get a cursor containing all information about the document specified by the given id
-    public Cursor getOneDocument(long id) {
+    public synchronized Cursor getOneDocument(long id) {
         open();
-        Cursor cursor = database.query("documents", null, "_id='" + id, null, null, null, null);
-        close();
-        return cursor;
+        //Cursor cursor = database.query("documents", null, "_id='" + id, null, null, null, null);
+        //close();
+        //return cursor;
+        return database.query("documents", null, "_id=" + id, null, null, null, null);
     }
 
     // Delete the document specified by the given String name

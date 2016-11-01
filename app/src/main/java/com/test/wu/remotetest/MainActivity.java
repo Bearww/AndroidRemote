@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,7 +31,22 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.test.wu.remotetest.DataUtils.*;
+import static com.test.wu.remotetest.DataUtils.BACKUP_FILE_NAME;
+import static com.test.wu.remotetest.DataUtils.BACKUP_FOLDER_PATH;
+import static com.test.wu.remotetest.DataUtils.NEW_NOTE_REQUEST;
+import static com.test.wu.remotetest.DataUtils.NOTES_FILE_NAME;
+import static com.test.wu.remotetest.DataUtils.NOTE_BODY;
+import static com.test.wu.remotetest.DataUtils.NOTE_COLOUR;
+import static com.test.wu.remotetest.DataUtils.NOTE_FAVOURED;
+import static com.test.wu.remotetest.DataUtils.NOTE_FONT_SIZE;
+import static com.test.wu.remotetest.DataUtils.NOTE_HIDE_BODY;
+import static com.test.wu.remotetest.DataUtils.NOTE_REQUEST_CODE;
+import static com.test.wu.remotetest.DataUtils.NOTE_TITLE;
+import static com.test.wu.remotetest.DataUtils.deleteNotes;
+import static com.test.wu.remotetest.DataUtils.isExternalStorageReadable;
+import static com.test.wu.remotetest.DataUtils.isExternalStorageWritable;
+import static com.test.wu.remotetest.DataUtils.retrieveData;
+import static com.test.wu.remotetest.DataUtils.saveData;
 
 
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
@@ -443,7 +457,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
-
     /**
      * Item clicked in Toolbar menu callback method
      * @param menuItem Item clicked
@@ -452,7 +465,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         int id = menuItem.getItemId();
-
+        // TODO remove unused icon event
+/*
         // 'Backup notes' pressed -> show backupCheckDialog
         if (id == R.id.action_backup) {
             backupCheckDialog.show();
@@ -497,7 +511,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
             return true;
         }
-
+*/
         return false;
     }
 

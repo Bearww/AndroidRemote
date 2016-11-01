@@ -14,8 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +58,11 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
 
     int selectPollType = NONE;
     String[] pollType = { "Multiple Choice", "Open Text", "Rating" };
+
+    // TODO poll list
+    ArrayList<String> polls = new ArrayList<>();
+
+    int selectedOption = -1;
 
     AskEvent askEvent = new AskEvent();
 
@@ -241,27 +246,62 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
 
     private void showVoteAlertDialog() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View view = inflater.inflate(R.layout.dialog_vote, null);
+        final View view = inflater.inflate(R.layout.dialog_vote_list, null);
+
+        ListView pollListView = (ListView) view.findViewById(R.id.voteListView);
+        ArrayAdapter<String> pollAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, polls.toArray(new String[0]));
+        pollListView.setAdapter(pollAdapter);
+        pollListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                final View dialogView = inflater.inflate(R.layout.dialog_vote, null);
+
+                // TODO checked previous vote result and display
+                // if(...) then radio = selected;
+                selectedOption = -1;    // Suppose no any selected option
+
+                RadioGroup voteOptionGroup = (RadioGroup) dialogView.findViewById(R.id.voteOptionGroup);
+                voteOptionGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        selectedOption = group.indexOfChild(dialogView.findViewById(checkedId));
+                    }
+                });
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                alertDialog.setTitle("投票");
+                alertDialog.setView(dialogView);
+                alertDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO save vote result
+                        if(selectedOption != -1)
+                            dialog.dismiss();
+                    }
+                });
+                alertDialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alertDialog.show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         alertDialog.setTitle("投票");
         alertDialog.setView(view);
-        alertDialog.setPositiveButton("送出", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO add vote event
-                /*
-                EditText askText = (EditText) view.findViewById(R.id.askText);
-                CheckBox publicCheck = (CheckBox) view.findViewById(R.id.publicCheck);
 
-                if(publicCheck.isChecked())
-                    askEvent.addAsk(askText.getText().toString(), userName, selectedQuestion);
-                else
-                    askEvent.addAsk(askText.getText().toString(), userName, selectedQuestion, false);
-
-                // TODO update vote list
-                updateAskList();
-                */
             }
         });
         alertDialog.show();
@@ -272,7 +312,7 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View view = inflater.inflate(R.layout.dialog_create_vote, null);
-
+/*
         ImageButton multiChoiceBtn = (ImageButton) view.findViewById(R.id.multiChoiceButton);
         ImageButton openTextBtn = (ImageButton) view.findViewById(R.id.openTextButton);
         ImageButton ratingBtn = (ImageButton) view.findViewById(R.id.ratingButton);
@@ -315,13 +355,32 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
                 displayVoteView(flipper, RATING);
             }
         });
-
+*/
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         alertDialog.setTitle("Create poll");
         alertDialog.setView(view);
-        alertDialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // Check question field is not empty
+                EditText pollText = (EditText) view.findViewById(R.id.pollText);
+                if(pollText.getText().length() == 0) {
+                    pollText.requestFocus();
+                }
+                else {
+                    // Add this poll to polls
+                    polls.add(pollText.getText().toString());
+                    // TODO send to server
+                }
+
+                // Back to main window
+            }
+        });
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO ask for save modified, then load saved data next time
+
                 // Back to main window
             }
         });

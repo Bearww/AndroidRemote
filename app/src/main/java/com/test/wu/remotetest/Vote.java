@@ -1,6 +1,7 @@
 package com.test.wu.remotetest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 public class Vote {
     private String vTitle = "";
     private String vContent = "";
+    private Date vDate = new Date();
     private Map<String, Integer> vOptions = new LinkedHashMap<String, Integer>();
 
     public Vote() { }
@@ -29,7 +31,7 @@ public class Vote {
         return vTitle;
     }
 
-    public String getvContent() {
+    public String getContent() {
         return vContent;
     }
 

@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pollText"
+        android:background="@color/transparent"
+        android:inputType="textCapSentences|textImeMultiLine|textMultiLine"
+        android:gravity="start|end"
+        android:ems="10"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:hint="@string/note_body"
+        android:maxLines="2000"
+        android:textSize="18sp"
+        android:textColorHint="@color/black_50"
+        android:textColor="@color/black_95" />
+</RelativeLayout>
+<!--
 <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -214,3 +235,4 @@
             android:numStars="10" />
     </RelativeLayout>
 </ViewFlipper>
+-->

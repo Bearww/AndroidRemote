@@ -22,6 +22,8 @@ public class Constants {
     public static final String ROW_ID = "row_id";
     public static final String DOC_NAME = "name";
     public static final String DOC_LINK = "link";
+    public static final String TAG_CONNECTION = "connection";
+    public static final String TAG_LINK_DATA = "link_data";
 
     public static final int FRAMES_PER_SECOND = 1;
 

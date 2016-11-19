@@ -17,7 +17,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                MeetingMember tab1 = new MeetingMember();
+                MainFragment tab1 = new MainFragment();
                 //TabFragment1 tab1 = new TabFragment1();
                 return tab1;
             case 3:

@@ -1,22 +1,24 @@
 package com.test.wu.remotetest;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -49,7 +51,7 @@ import static com.test.wu.remotetest.DataUtils.retrieveData;
 import static com.test.wu.remotetest.DataUtils.saveData;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
+public class MainFragment extends Fragment implements AdapterView.OnItemClickListener,
         Toolbar.OnMenuItemClickListener, AbsListView.MultiChoiceModeListener,
         SearchView.OnQueryTextListener {
 
@@ -80,11 +82,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Initialize local file path and backup file path
-        localPath = new File(getFilesDir() + "/" + NOTES_FILE_NAME);
+        localPath = new File(getContext().getFilesDir() + "/" + NOTES_FILE_NAME);
 
         File backupFolder = new File(Environment.getExternalStorageDirectory() +
                 BACKUP_FOLDER_PATH);
@@ -94,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         backupPath = new File(backupFolder, BACKUP_FILE_NAME);
 
+/*
         // Android version >= 18 -> set orientation userPortrait
         if (Build.VERSION.SDK_INT >= 18)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
@@ -101,7 +104,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         // Android version < 18 -> set orientation sensorPortrait
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-
+*/
         // Init notes array
         notes = new JSONArray();
 
@@ -111,14 +114,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         // If not null -> equal main notes to retrieved notes
         if (tempNotes != null)
             notes = tempNotes;
+    }
 
-        setContentView(R.layout.activity_main);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //setContentView(R.layout.fragment_main);
 
         // Init layout components
-        toolbar = (Toolbar)findViewById(R.id.toolbarMain);
-        listView = (ListView)findViewById(R.id.listView);
-        newNote = (ImageButton)findViewById(R.id.newNote);
-        noNotes = (TextView)findViewById(R.id.noNotes);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbarMain);
+        listView = (ListView) view.findViewById(R.id.listView);
+        newNote = (ImageButton) view.findViewById(R.id.newNote);
+        noNotes = (TextView) view.findViewById(R.id.noNotes);
 
         if (toolbar != null)
             initToolbar();
@@ -126,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         newNoteButtonBaseYCoordinate = newNote.getY();
 
         // Initialize NoteAdapter with notes array
-        adapter = new NoteAdapter(getApplicationContext(), notes);
+        adapter = new NoteAdapter(getContext(), notes);
         listView.setAdapter(adapter);
 
         // Set item click, multi choice and scroll listeners
@@ -161,15 +169,32 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         });
 
 
-        // If newNote button clicked -> Start EditActivity intent with NEW_NOTE_REQUEST as request
+        // If newNote button clicked -> Start EditFragment intent with NEW_NOTE_REQUEST as request
         newNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+/*
+                Intent intent = new Intent(getContext(), EditFragment.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent.putExtra(NOTE_REQUEST_CODE, NEW_NOTE_REQUEST);
 
                 startActivityForResult(intent, NEW_NOTE_REQUEST);
+*/
+                // Create fragment and give it an argument
+                EditFragment nextFragment = new EditFragment();
+                Bundle args = new Bundle();
+                args.putInt(NOTE_REQUEST_CODE, NEW_NOTE_REQUEST);
+                nextFragment.setArguments(args);
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack so the user can navigate back
+                transaction.replace(R.id.layout_container, nextFragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
             }
         });
 
@@ -180,7 +205,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         else
             noNotes.setVisibility(View.INVISIBLE);
 
-        initDialogs(this);
+        initDialogs(getContext());
+
+        return view;
     }
 
 
@@ -247,7 +274,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     /**
      * Implementation of AlertDialogs such as
      * - backupCheckDialog, backupOKDialog, restoreCheckDialog, restoreFailedDialog -
-     * @param context The Activity context of the dialogs; in this case MainActivity context
+     * @param context The Activity context of the dialogs; in this case MainFragment context
      */
     protected void initDialogs(Context context) {
         /*
@@ -270,7 +297,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                                 showBackupSuccessfulDialog();
 
                             else {
-                                Toast toast = Toast.makeText(getApplicationContext(),
+                                Toast toast = Toast.makeText(getContext(),
                                         getResources().getString(R.string.toast_backup_failed),
                                         Toast.LENGTH_SHORT);
                                 toast.show();
@@ -279,7 +306,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
                         // If notes array is empty -> toast backup no notes found
                         else {
-                            Toast toast = Toast.makeText(getApplicationContext(),
+                            Toast toast = Toast.makeText(getContext(),
                                     getResources().getString(R.string.toast_backup_no_notes),
                                     Toast.LENGTH_SHORT);
                             toast.show();
@@ -331,10 +358,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                             if (restoreSuccessful) {
                                 notes = tempNotes;
 
-                                adapter = new NoteAdapter(getApplicationContext(), notes);
+                                adapter = new NoteAdapter(getContext(), notes);
                                 listView.setAdapter(adapter);
 
-                                Toast toast = Toast.makeText(getApplicationContext(),
+                                Toast toast = Toast.makeText(getContext(),
                                         getResources().getString(R.string.toast_restore_successful),
                                         Toast.LENGTH_SHORT);
                                 toast.show();
@@ -349,7 +376,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
                             // If restore unsuccessful -> toast restore unsuccessful
                             else {
-                                Toast toast = Toast.makeText(getApplicationContext(),
+                                Toast toast = Toast.makeText(getContext(),
                                         getResources().getString(R.string.toast_restore_unsuccessful),
                                         Toast.LENGTH_SHORT);
                                 toast.show();
@@ -397,19 +424,20 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
     /**
-     * If item clicked in list view -> Start EditActivity intent with position as requestCode
+     * If item clicked in list view -> Start EditFragment intent with position as requestCode
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, EditActivity.class);
+/*
+        Intent intent = new Intent(getContext(), EditFragment.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
-        // If search is active -> use position from realIndexesOfSearchResults for EditActivity
+        // If search is active -> use position from realIndexesOfSearchResults for EditFragment
         if (searchActive) {
             int newPosition = realIndexesOfSearchResults.get(position);
 
             try {
-                // Package selected note content and send to EditActivity
+                // Package selected note content and send to EditFragment
                 intent.putExtra(NOTE_TITLE, notes.getJSONObject(newPosition).getString(NOTE_TITLE));
                 intent.putExtra(NOTE_BODY, notes.getJSONObject(newPosition).getString(NOTE_BODY));
                 intent.putExtra(NOTE_COLOUR, notes.getJSONObject(newPosition).getString(NOTE_COLOUR));
@@ -431,10 +459,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             startActivityForResult(intent, newPosition);
         }
 
-        // If search is not active -> use normal position for EditActivity
+        // If search is not active -> use normal position for EditFragment
         else {
             try {
-                // Package selected note content and send to EditActivity
+                // Package selected note content and send to EditFragment
                 intent.putExtra(NOTE_TITLE, notes.getJSONObject(position).getString(NOTE_TITLE));
                 intent.putExtra(NOTE_BODY, notes.getJSONObject(position).getString(NOTE_BODY));
                 intent.putExtra(NOTE_COLOUR, notes.getJSONObject(position).getString(NOTE_COLOUR));
@@ -455,6 +483,73 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             intent.putExtra(NOTE_REQUEST_CODE, position);
             startActivityForResult(intent, position);
         }
+*/
+        // Create fragment and give it an argument
+        EditFragment nextFragment = new EditFragment();
+        Bundle args = new Bundle();
+        args.putInt(NOTE_REQUEST_CODE, NEW_NOTE_REQUEST);
+
+        // If search is active -> use position from realIndexesOfSearchResults for EditFragment
+        if (searchActive) {
+            int newPosition = realIndexesOfSearchResults.get(position);
+
+            try {
+                // Package selected note content and send to EditFragment
+                args.putString(NOTE_TITLE, notes.getJSONObject(newPosition).getString(NOTE_TITLE));
+                args.putString(NOTE_BODY, notes.getJSONObject(newPosition).getString(NOTE_BODY));
+                args.putString(NOTE_COLOUR, notes.getJSONObject(newPosition).getString(NOTE_COLOUR));
+                args.putInt(NOTE_FONT_SIZE, notes.getJSONObject(newPosition).getInt(NOTE_FONT_SIZE));
+
+                if (notes.getJSONObject(newPosition).has(NOTE_HIDE_BODY)) {
+                    args.putBoolean(NOTE_HIDE_BODY,
+                            notes.getJSONObject(newPosition).getBoolean(NOTE_HIDE_BODY));
+                }
+
+                else
+                    args.putBoolean(NOTE_HIDE_BODY, false);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            args.putInt(NOTE_REQUEST_CODE, newPosition);
+        }
+
+        // If search is not active -> use normal position for EditFragment
+        else {
+            try {
+                // Package selected note content and send to EditFragment
+                args.putString(NOTE_TITLE, notes.getJSONObject(position).getString(NOTE_TITLE));
+                args.putString(NOTE_BODY, notes.getJSONObject(position).getString(NOTE_BODY));
+                args.putString(NOTE_COLOUR, notes.getJSONObject(position).getString(NOTE_COLOUR));
+                args.putInt(NOTE_FONT_SIZE, notes.getJSONObject(position).getInt(NOTE_FONT_SIZE));
+
+                if (notes.getJSONObject(position).has(NOTE_HIDE_BODY)) {
+                    args.putBoolean(NOTE_HIDE_BODY,
+                            notes.getJSONObject(position).getBoolean(NOTE_HIDE_BODY));
+                }
+
+                else
+                    args.putBoolean(NOTE_HIDE_BODY, false);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            args.putInt(NOTE_REQUEST_CODE, position);
+        }
+
+        nextFragment.setArguments(args);
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.layout_container, nextFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
     }
 
     /**
@@ -560,7 +655,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
         if (item.getItemId() == R.id.action_delete) {
-            new AlertDialog.Builder(this)
+            new AlertDialog.Builder(getContext())
                     .setMessage(R.string.dialog_delete)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
@@ -569,7 +664,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                             notes = deleteNotes(notes, checkedArray);
 
                             // Create and set new adapter with new notes array
-                            adapter = new NoteAdapter(getApplicationContext(), notes);
+                            adapter = new NoteAdapter(getContext(), notes);
                             listView.setAdapter(adapter);
 
                             // Attempt to save notes to local file
@@ -577,7 +672,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
                             // If save successful -> toast successfully deleted
                             if (saveSuccessful) {
-                                Toast toast = Toast.makeText(getApplicationContext(),
+                                Toast toast = Toast.makeText(getContext(),
                                         getResources().getString(R.string.toast_deleted),
                                         Toast.LENGTH_SHORT);
                                 toast.show();
@@ -700,7 +795,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             }
 
             // Create and set adapter with notesFound to refresh ListView
-            NoteAdapter searchAdapter = new NoteAdapter(getApplicationContext(), notesFound);
+            NoteAdapter searchAdapter = new NoteAdapter(getContext(), notesFound);
             listView.setAdapter(searchAdapter);
         }
 
@@ -710,7 +805,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             for (int i = 0; i < notes.length(); i++)
                 realIndexesOfSearchResults.add(i);
 
-            adapter = new NoteAdapter(getApplicationContext(), notes);
+            adapter = new NoteAdapter(getContext(), notes);
             listView.setAdapter(adapter);
         }
 
@@ -730,7 +825,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
      */
     protected void searchEnded() {
         searchActive = false;
-        adapter = new NoteAdapter(getApplicationContext(), notes);
+        adapter = new NoteAdapter(getContext(), notes);
         listView.setAdapter(adapter);
         listView.setLongClickable(true);
         newNoteButtonVisibility(true);
@@ -738,14 +833,14 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
     /**
-     * Callback method when EditActivity finished adding new note or editing existing note
+     * Callback method when EditFragment finished adding new note or editing existing note
      * @param requestCode requestCode for intent sent, in our case either NEW_NOTE_REQUEST or position
      * @param resultCode resultCode from activity, either RESULT_OK or RESULT_CANCELED
-     * @param data Data bundle passed back from EditActivity
+     * @param data Data bundle passed back from EditFragment
      */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
             // If search was active -> call 'searchEnded' method
             if (searchActive && searchMenu != null)
                 searchMenu.collapseActionView();
@@ -783,7 +878,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                         Boolean saveSuccessful = saveData(localPath, notes);
 
                         if (saveSuccessful) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
+                            Toast toast = Toast.makeText(getContext(),
                                     getResources().getString(R.string.toast_new_note),
                                     Toast.LENGTH_SHORT);
                             toast.show();
@@ -825,7 +920,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                         Boolean saveSuccessful = saveData(localPath, notes);
 
                         if (saveSuccessful) {
-                            Toast toast = Toast.makeText(getApplicationContext(),
+                            Toast toast = Toast.makeText(getContext(),
                                     getResources().getString(R.string.toast_note_saved),
                                     Toast.LENGTH_SHORT);
                             toast.show();
@@ -835,8 +930,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             }
         }
 
-
-        else if (resultCode == RESULT_CANCELED) {
+        else if (resultCode == Activity.RESULT_CANCELED) {
             Bundle mBundle = null;
 
             // If data is not null, has "request" extra and is new note -> get extras to bundle
@@ -845,7 +939,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
                 // If new note discarded -> toast empty note discarded
                 if (mBundle != null && mBundle.getString("request").equals("discard")) {
-                    Toast toast = Toast.makeText(getApplicationContext(),
+                    Toast toast = Toast.makeText(getContext(),
                             getResources().getString(R.string.toast_empty_note_discarded),
                             Toast.LENGTH_SHORT);
                     toast.show();
@@ -956,6 +1050,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     /**
      * If back button pressed while search is active -> collapse view and end search mode
      */
+/*
     @Override
     public void onBackPressed() {
         if (searchActive && searchMenu != null) {
@@ -965,7 +1060,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         super.onBackPressed();
     }
-
+*/
 
     /**
      * Orientation changed callback method

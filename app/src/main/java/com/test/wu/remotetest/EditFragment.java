@@ -1,21 +1,22 @@
 package com.test.wu.remotetest;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -24,11 +25,18 @@ import android.widget.Toast;
 
 import com.test.wu.remotetest.ColorPicker.ColorPickerDialog;
 
-import static com.test.wu.remotetest.ColorPicker.ColorPickerSwatch.*;
-import static com.test.wu.remotetest.DataUtils.*;
+import static com.test.wu.remotetest.ColorPicker.ColorPickerSwatch.OnColorSelectedListener;
+import static com.test.wu.remotetest.ColorPicker.ColorPickerSwatch.OnTouchListener;
+import static com.test.wu.remotetest.DataUtils.NEW_NOTE_REQUEST;
+import static com.test.wu.remotetest.DataUtils.NOTE_BODY;
+import static com.test.wu.remotetest.DataUtils.NOTE_COLOUR;
+import static com.test.wu.remotetest.DataUtils.NOTE_FONT_SIZE;
+import static com.test.wu.remotetest.DataUtils.NOTE_HIDE_BODY;
+import static com.test.wu.remotetest.DataUtils.NOTE_REQUEST_CODE;
+import static com.test.wu.remotetest.DataUtils.NOTE_TITLE;
 
 
-public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuItemClickListener {
+public class EditFragment extends Fragment implements Toolbar.OnMenuItemClickListener, IOnFocusListenable {
 
     // Layout components
     private EditText titleEdit, bodyEdit;
@@ -54,9 +62,9 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+/*
         // Android version >= 18 -> set orientation fullUser
         if (Build.VERSION.SDK_INT >= 18)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
@@ -64,7 +72,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
         // Android version < 18 -> set orientation fullSensor
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-
+*/
         // Initialize colours and font sizes arrays
         colourArr = getResources().getStringArray(R.array.colours);
 
@@ -72,19 +80,22 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
         for (int i = 0; i < colourArr.length; i++)
             colourArrResId[i] = Color.parseColor(colourArr[i]);
 
-        fontSizeArr = new int[] {14, 18, 22}; // 0 for small, 1 for medium, 2 for large
+        fontSizeArr = new int[]{14, 18, 22}; // 0 for small, 1 for medium, 2 for large
         fontSizeNameArr = getResources().getStringArray(R.array.fontSizeNames);
+    }
 
-        setContentView(R.layout.activity_edit);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_edit, container, false);
 
         // Init layout components
-        toolbar = (Toolbar)findViewById(R.id.toolbarEdit);
-        titleEdit = (EditText)findViewById(R.id.titleEdit);
-        bodyEdit = (EditText)findViewById(R.id.bodyEdit);
-        relativeLayoutEdit = (RelativeLayout)findViewById(R.id.relativeLayoutEdit);
-        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
+        toolbar = (Toolbar) view.findViewById(R.id.toolbarEdit);
+        titleEdit = (EditText) view.findViewById(R.id.titleEdit);
+        bodyEdit = (EditText) view.findViewById(R.id.bodyEdit);
+        relativeLayoutEdit = (RelativeLayout) view.findViewById(R.id.relativeLayoutEdit);
+        ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
 
-        imm = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
 
         if (toolbar != null)
             initToolbar();
@@ -107,8 +118,8 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
             }
         });
 
-        // Get data bundle from MainActivity
-        bundle = getIntent().getExtras();
+        // Get data bundle from MainFragment
+        bundle = getArguments();
 
         if (bundle != null) {
             // If current note is not new -> initialize colour, font, hideBody and EditTexts
@@ -135,7 +146,8 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
             relativeLayoutEdit.setBackgroundColor(Color.parseColor(colour));
         }
 
-        initDialogs(this);
+        initDialogs(getContext());
+        return view;
     }
 
 
@@ -171,13 +183,13 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
     /**
      * Implementation of AlertDialogs such as
      * - colorPickerDialog, fontDialog and saveChangesDialog -
-     * @param context The Activity context of the dialogs; in this case EditActivity context
+     * @param context The Activity context of the dialogs; in this case EditFragment context
      */
     protected void initDialogs(Context context) {
         // Colour picker dialog
         colorPickerDialog = ColorPickerDialog.newInstance(R.string.dialog_note_colour,
                 colourArrResId, Color.parseColor(colour), 3,
-                isTablet(this) ? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+                isTablet(getContext()) ? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 
         // Colour picker listener in colour picker dialog
         colorPickerDialog.setOnColorSelectedListener(new OnColorSelectedListener() {
@@ -242,13 +254,15 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
                             Intent intent = new Intent();
                             intent.putExtra("request", "discard");
 
-                            setResult(RESULT_CANCELED, intent);
+                            getActivity().setResult(Activity.RESULT_CANCELED, intent);
 
                             imm.hideSoftInputFromWindow(titleEdit.getWindowToken(), 0);
 
                             dialog.dismiss();
-                            finish();
-                            overridePendingTransition(0, 0);
+                            //getActivity().finish();
+                            //getActivity().overridePendingTransition(0, 0);
+
+                            getActivity().onBackPressed();
                         }
                     }
                 })
@@ -278,7 +292,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
 
         // Note colour menu item clicked -> show colour picker dialog
         if (id == R.id.action_note_colour) {
-            colorPickerDialog.show(getFragmentManager(), "colourPicker");
+            colorPickerDialog.show(getActivity().getFragmentManager(), "colourPicker");
             return true;
         }
 
@@ -296,7 +310,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
                 menuHideBody.setTitle(R.string.action_show_body);
 
                 // Toast note body will be hidden
-                Toast toast = Toast.makeText(getApplicationContext(),
+                Toast toast = Toast.makeText(getContext(),
                         getResources().getString(R.string.toast_note_body_hidden),
                         Toast.LENGTH_SHORT);
                 toast.show();
@@ -308,7 +322,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
                 menuHideBody.setTitle(R.string.action_hide_body);
 
                 // Toast note body will be shown
-                Toast toast = Toast.makeText(getApplicationContext(),
+                Toast toast = Toast.makeText(getContext(),
                         getResources().getString(R.string.toast_note_body_showing),
                         Toast.LENGTH_SHORT);
                 toast.show();
@@ -323,7 +337,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
 
     /**
      * Create an Intent with title, body, colour, font size and hideBody extras
-     * Set RESULT_OK and go back to MainActivity
+     * Set RESULT_OK and go back to MainFragment
      */
     protected void saveChanges() {
         Intent intent = new Intent();
@@ -335,19 +349,19 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
         intent.putExtra(NOTE_FONT_SIZE, fontSize);
         intent.putExtra(NOTE_HIDE_BODY, hideBody);
 
-        setResult(RESULT_OK, intent);
+        getActivity().setResult(Activity.RESULT_OK, intent);
 
         imm.hideSoftInputFromWindow(titleEdit.getWindowToken(), 0);
 
-        finish();
-        overridePendingTransition(0, 0);
+        //getActivity().finish();
+        //getActivity().overridePendingTransition(0, 0);
+        getActivity().onBackPressed();
     }
 
 
     /**
      * Back or navigation '<-' pressed
      */
-    @Override
     public void onBackPressed() {
         // New note -> show 'Save changes?' dialog
         if (bundle.getInt(NOTE_REQUEST_CODE) == NEW_NOTE_REQUEST)
@@ -373,8 +387,9 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
                 else {
                     imm.hideSoftInputFromWindow(titleEdit.getWindowToken(), 0);
 
-                    finish();
-                    overridePendingTransition(0, 0);
+                    //getActivity().finish();
+                    //getActivity().overridePendingTransition(0, 0);
+                    getActivity().onBackPressed();
                 }
             }
 
@@ -398,7 +413,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
      * Show Toast for 'Title cannot be empty'
      */
     protected void toastEditTextCannotBeEmpty() {
-        Toast toast = Toast.makeText(getApplicationContext(),
+        Toast toast = Toast.makeText(getContext(),
                 getResources().getString(R.string.toast_edittext_cannot_be_empty),
                 Toast.LENGTH_LONG);
         toast.show();
@@ -411,7 +426,7 @@ public class EditActivity extends ActionBarActivity implements Toolbar.OnMenuIte
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
+        //super.onWindowFocusChanged(hasFocus);
 
         if (!hasFocus)
             if (imm != null && titleEdit != null)

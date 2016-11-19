@@ -12,11 +12,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,6 +31,8 @@ public class MenuActivity extends AppCompatActivity
     private MeetingJoinTask mJoinTask = null;
 
     private EditText meetingID;
+
+    private Map<String, String> meetingInfo = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +77,29 @@ public class MenuActivity extends AppCompatActivity
             }
         });
 
-        // Template
-        // Action of toolbar at bottom
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            try {
+                Boolean connectCloud = bundle.getBoolean(Constants.TAG_CONNECTION);
 
+                if(connectCloud) {
+                    String connectData = bundle.getString(Constants.TAG_LINK_DATA);
+                    Log.i("[MA]", "Loading cloud data");
+                    JSONObject content = LinkCloud.getJSON(connectData);
+                    meetingInfo = LinkCloud.getLink(content);
+                }
+
+                for(String key : meetingInfo.keySet()) {
+                    Log.i("[MA]map", key + " " + meetingInfo.get(key));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            // TODO read from local json/sql
+            Log.i("[MA]", "No cloud data");
+        }
     }
 
     @Override

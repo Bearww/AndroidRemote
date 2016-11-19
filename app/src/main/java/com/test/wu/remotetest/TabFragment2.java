@@ -30,7 +30,7 @@ public class TabFragment2 extends Fragment {
 
         textView = (TextView) view.findViewById(R.id.textView);
 
-        link = new LinkCloud("");
+        link = new LinkCloud();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -14,7 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.test.wu.remotetest.MainActivity.*;
+import static com.test.wu.remotetest.MainFragment.*;
 
     /*
     *   JSON file structure:

@@ -20,7 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.test.wu.remotetest.DataUtils.*;
-import static com.test.wu.remotetest.MainActivity.*;
+import static com.test.wu.remotetest.MainFragment.*;
 
 
 /**

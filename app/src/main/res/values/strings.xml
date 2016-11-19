@@ -125,4 +125,6 @@
     <string name="toast_backup_no_notes">No notes to backup</string>
     <string name="toast_restore_successful">Notes restored</string>
     <string name="toast_restore_unsuccessful">Restore unsuccessful</string>
+    <string name="poll_title">Title</string>
+    <string name="poll_body">Poll</string>
 </resources>

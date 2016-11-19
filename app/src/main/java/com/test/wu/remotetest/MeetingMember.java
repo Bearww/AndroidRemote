@@ -60,7 +60,7 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
     String[] pollType = { "Multiple Choice", "Open Text", "Rating" };
 
     // TODO poll list
-    ArrayList<String> polls = new ArrayList<>();
+    ArrayList<Vote> polls = new ArrayList<>();
 
     int selectedOption = -1;
 
@@ -248,8 +248,15 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View view = inflater.inflate(R.layout.dialog_vote_list, null);
 
+        TextView noPollText = (TextView) view.findViewById(R.id.noPollTextView);
+        if (polls.size() == 0)
+            noPollText.setVisibility(View.VISIBLE);
+
+        else
+            noPollText.setVisibility(View.INVISIBLE);
+
         ListView pollListView = (ListView) view.findViewById(R.id.voteListView);
-        ArrayAdapter<String> pollAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, polls.toArray(new String[0]));
+        ArrayAdapter<String> pollAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, getPollsTitle());
         pollListView.setAdapter(pollAdapter);
         pollListView.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -363,14 +370,26 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Check question field is not empty
-                EditText pollText = (EditText) view.findViewById(R.id.pollText);
-                if(pollText.getText().length() == 0) {
-                    pollText.requestFocus();
+                EditText pollTitle = (EditText) view.findViewById(R.id.pollTitle);
+                EditText pollBody = (EditText) view.findViewById(R.id.pollBody);
+
+                if(pollTitle.getText().length() == 0) {
+                    pollTitle.requestFocus();
                 }
                 else {
                     // Add this poll to polls
-                    polls.add(pollText.getText().toString());
+                    Vote vote = new Vote();
+                    vote.setTitle(pollTitle.getText().toString());
+                    vote.setContent(pollBody.getText().toString());
+
+                    // Add default options. (yes/no);
+                    vote.addOption("yes");
+                    vote.addOption("no");
+
+                    polls.add(vote);
                     // TODO send to server
+
+                    // Update vote list
                 }
 
                 // Back to main window
@@ -441,6 +460,17 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
         return list.toArray(memberList);
     }
 
+    private String[] getPollsTitle() {
+        ArrayList<String> list = new ArrayList<>();
+        String[] pollList = {};
+
+        for(Vote poll : polls) {
+            list.add(poll.getTitle());
+        }
+
+        return list.toArray(pollList);
+    }
+
     private void displayVoteView(ViewFlipper flipper, int target) {
         new AnimationUtils();
         flipper.setAnimation(AnimationUtils.makeInAnimation(getContext(), true));
@@ -459,6 +489,7 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
     }
 
     private void setAllSpinner(View view, ArrayAdapter adapter, OnItemSelectedListener listener) {
+/*
         Spinner spinner1 = (Spinner) view.findViewById(R.id.pollSpinner1);
         Spinner spinner2 = (Spinner) view.findViewById(R.id.pollSpinner2);
         Spinner spinner3 = (Spinner) view.findViewById(R.id.pollSpinner3);
@@ -474,5 +505,6 @@ public class MeetingMember extends Fragment implements OnItemSelectedListener {
         spinner1.setSelection(adapter.getPosition(pollType[0])); // MultiChoice
         spinner2.setSelection(adapter.getPosition(pollType[1])); // Open Text
         spinner3.setSelection(adapter.getPosition(pollType[2])); // Rating
+*/
     }
 }
